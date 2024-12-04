@@ -18,6 +18,7 @@ package io.github.aivruu.regionevents;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.github.aivruu.regionevents.api.RegionEvents;
+import io.github.aivruu.regionevents.api.RegionEventsProvider;
 import io.github.aivruu.regionevents.api.cache.EnteredRegionsCacheRepository;
 import io.github.aivruu.regionevents.api.region.PlayerRegionInformationController;
 import io.github.aivruu.regionevents.api.region.RegionUpdaterManager;
@@ -99,6 +100,7 @@ public final class RegionEventsPlugin extends JavaPlugin implements RegionEvents
       final var commands = eventHandler.registrar();
       commands.register(this.command.register());
     });
+    RegionEventsProvider.set(this);
     this.logger.info(Component.text("The plugin has been enabled!").color(NamedTextColor.GREEN));
   }
 
