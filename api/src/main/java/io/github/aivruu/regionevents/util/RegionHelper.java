@@ -27,6 +27,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,6 +65,29 @@ public final class RegionHelper {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns a {@link List} with all the {@link Player}'s that are in the specified region.
+   *
+   * @param cache the in-region players' cache for searching.
+   * @param regionId the region where search.
+   * @return A {@link List} with the players in the region.
+   * @since 1.1.0
+   */
+  public static List<Player> playersInRegion(final Map<String, ProtectedRegion> cache, final String regionId) {
+    final var list = new ArrayList<Player>();
+    cache.forEach((id, region) -> {
+      if (!region.getId().equals(regionId)) {
+        return;
+      }
+      final var player = Bukkit.getPlayer(id);
+      if (player == null) {
+        return;
+      }
+      list.add(player);
+    });
+    return list;
   }
 
   /**
