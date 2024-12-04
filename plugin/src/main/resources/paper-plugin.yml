@@ -1,0 +1,14 @@
+name: RegionEvents
+main: io.github.aivruu.regionevents.RegionEventsPlugin
+loader: io.github.aivruu.regionevents.library.RegionEventsPluginLoader
+authors: [ "aivruu" ]
+
+api-version: "1.20"
+version: ${version}
+
+dependencies:
+  server:
+    WorldGuard:
+      load: BEFORE
+      required: true
+      join-classpath: true
