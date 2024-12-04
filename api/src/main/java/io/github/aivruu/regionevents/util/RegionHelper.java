@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * This class provide utility-functions to work with {@code WorldGuard}'s functions, such as region-search
@@ -77,16 +78,18 @@ public final class RegionHelper {
    */
   public static List<Player> playersInRegion(final Map<String, ProtectedRegion> cache, final String regionId) {
     final var list = new ArrayList<Player>();
-    cache.forEach((id, region) -> {
-      if (!region.getId().equals(regionId)) {
-        return;
+    for (final var id : cache.keySet()) {
+      for (final var region : cache.values()) {
+        if (!region.getId().equals(regionId)) {
+          continue;
+        }
+        final var player = Bukkit.getPlayer(UUID.fromString(id));
+        if (player == null) {
+          continue;
+        }
+        list.add(player);
       }
-      final var player = Bukkit.getPlayer(id);
-      if (player == null) {
-        return;
-      }
-      list.add(player);
-    });
+    }
     return list;
   }
 
