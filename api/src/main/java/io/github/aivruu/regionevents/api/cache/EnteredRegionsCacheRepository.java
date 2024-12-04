@@ -16,6 +16,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 package io.github.aivruu.regionevents.api.cache;
 
+import com.google.common.collect.ImmutableMap;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.github.aivruu.regionevents.api.repository.RepositoryModel;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +35,11 @@ public final class EnteredRegionsCacheRepository implements RepositoryModel<Prot
   @Override
   public @Nullable ProtectedRegion findSync(final String id) {
     return this.enteredRegionsCache.get(id);
+  }
+
+  @Override
+  public ImmutableMap<String, ProtectedRegion> findAllSync() {
+    return ImmutableMap.copyOf(this.enteredRegionsCache);
   }
 
   @Override

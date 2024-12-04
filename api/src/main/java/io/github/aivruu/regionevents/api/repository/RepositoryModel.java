@@ -16,7 +16,10 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 package io.github.aivruu.regionevents.api.repository;
 
+import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * This interface is used as model to provide methods for repositories' information-handling.
@@ -32,6 +35,14 @@ public interface RepositoryModel<T> {
    * @since 1.0.0
    */
   @Nullable T findSync(final String id);
+
+  /**
+   * Returns a non-modifiable {@link Collection} with all the current stored-values in this repository.
+   *
+   * @return A immutable {@link Collection} with this repository's registry.
+   * @since 1.0.0
+   */
+  ImmutableMap<String, T> findAllSync();
 
   /**
    * Saves the given object into the repository with its id.
