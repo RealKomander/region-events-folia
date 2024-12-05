@@ -4,7 +4,7 @@
 ![GitHub License](https://img.shields.io/github/license/aivruu/region-events)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/aivruu/region-events)
 
-`RegionEvents` is a very modern-plugin that manages when a player enters or leaves a `WorldGuard` region in their world. This plugin provides an API to work
+`RegionEvents` is a modern-plugin that manages when a player enters or leaves a `WorldGuard` region in their world. This plugin provides an API to work
 with players that are in a region, provide functions to search regions at a world or location, and listen to events when a player enters or leaves a region.
 
 This plugin was made to run with `Paper (or forks)` on versions 1.21.3 and newer.
