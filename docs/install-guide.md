@@ -3,7 +3,7 @@
 The plugin's API can be imported by using a dependency-manager and download the dependency from JitPack's repository (`jitpack.io`). Or use the plugin's jar to have access to the
 API classes and events.
 
-: [Latest Release](https://github.com/aivruu/region-events/releases/latest)
+: [Latest Release](https://github.com/RealKomander/region-events-folia/releases/latest)
 
 ```kotlin
 repositories {
@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
   // Replace 'VERSION' with the latest-release.
-  compileOnly("com.github.aivruu:region-events:VERSION")
+  compileOnly("com.github.RealKomander:region-events-folia:VERSION")
 }
 ```
 
@@ -26,10 +26,10 @@ dependencies {
 
 <dependencies>
   <dependency>
-    <groupId>com.github.aivruu</groupId>
-    <artifactId>region-events</artifactId>
-    <version>VERSION</version>
-    <scope>compile</scope>
-  </dependency>
+	    <groupId>com.github.RealKomander</groupId>
+	    <artifactId>region-events-folia</artifactId>
+	    <version>VERSION</version>
+      <scope>compile</scope>
+	</dependency>
 </dependencies>
 ```
