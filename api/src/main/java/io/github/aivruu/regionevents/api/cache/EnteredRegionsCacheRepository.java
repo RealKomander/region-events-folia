@@ -21,8 +21,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.github.aivruu.regionevents.api.repository.RepositoryModel;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * {@link RepositoryModel} implementation for the entered {@link ProtectedRegion} by players.
@@ -30,7 +30,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 public final class EnteredRegionsCacheRepository implements RepositoryModel<ProtectedRegion> {
-  private final Map<String, ProtectedRegion> enteredRegionsCache = new HashMap<>();
+  private final Map<String, ProtectedRegion> enteredRegionsCache = new ConcurrentHashMap<>();
 
   @Override
   public @Nullable ProtectedRegion findSync(final String id) {

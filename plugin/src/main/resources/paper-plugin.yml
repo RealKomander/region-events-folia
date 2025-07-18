@@ -2,7 +2,7 @@ name: RegionEvents
 main: io.github.aivruu.regionevents.RegionEventsPlugin
 loader: io.github.aivruu.regionevents.library.RegionEventsPluginLoader
 authors: [ "aivruu" ]
-
+folia-supported: true
 api-version: "1.20"
 version: ${version}
 

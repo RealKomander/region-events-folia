@@ -25,6 +25,7 @@ import io.github.aivruu.regionevents.event.RegionEnteredEvent;
 import io.github.aivruu.regionevents.event.RegionQuitEvent;
 import io.github.aivruu.regionevents.util.DebugHelper;
 import io.github.aivruu.regionevents.util.RegionHelper;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -38,6 +39,15 @@ public final class PluginRegionUpdaterManagerImpl implements RegionUpdaterManage
   private final PluginManager pluginManager;
   private SettingsConfigModel config;
   private World world;
+  private ScheduledTask task;
+  private static boolean FOLIA_SUPPORT = false;
+  static {
+    try {
+      Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+      FOLIA_SUPPORT = true;
+    } catch (ClassNotFoundException ignored) {
+    }
+  }
 
   public PluginRegionUpdaterManagerImpl(final PlayerRegionInformationController playerRegionInformation, final BukkitScheduler bukkitScheduler,
                                         final RegionEventsPlugin plugin, final PluginManager pluginManager,
@@ -63,24 +73,36 @@ public final class PluginRegionUpdaterManagerImpl implements RegionUpdaterManage
    */
   @Override
   public void start() {
-    final var asyncScheduler = this.plugin.getServer().getAsyncScheduler();
     if (this.config.monitorSingleWorldForRegions) {
       this.world = Bukkit.getWorld(this.config.worldToMonitor);
       DebugHelper.write("Value initialization for single-world monitoring is: {}", (this.world == null) ? "N/A" : this.config.worldToMonitor);
     }
     DebugHelper.write("Registering async-task for region-events firing management.");
-    asyncScheduler.runAtFixedRate(this.plugin, task -> {
-      if (this.world != null) {
-        this.processSingleWorldUpdating();
-      } else {
-        this.processAllWorldsUpdating();
-      }
-    }, 1L, this.config.taskUpdateRate, this.config.timeUnitForUpdateRate);
+    if (FOLIA_SUPPORT) {
+      this.task = this.plugin.getServer().getGlobalRegionScheduler().runAtFixedRate(this.plugin, scheduledTask -> {
+        if (this.world != null) {
+          this.processSingleWorldUpdating();
+        } else {
+          this.processAllWorldsUpdating();
+        }
+        }, 1L, this.config.taskUpdateRate);
+    } else {
+      final var asyncScheduler = this.plugin.getServer().getAsyncScheduler();
+      this.task = asyncScheduler.runAtFixedRate(this.plugin, task -> {
+        if (this.world != null) {
+          this.processSingleWorldUpdating();
+        } else {
+          this.processAllWorldsUpdating();
+        }
+        }, 1L, this.config.taskUpdateRate, this.config.timeUnitForUpdateRate);
+    }
   }
 
   @Override
   public void stop() {
-    this.plugin.getServer().getAsyncScheduler().cancelTasks(this.plugin);
+    if(this.task != null) {
+      this.task.cancel();
+    }
   }
 
   /**
@@ -124,8 +146,11 @@ public final class PluginRegionUpdaterManagerImpl implements RegionUpdaterManage
       return true;
     }
     final var regionEnteredEvent = new RegionEnteredEvent(player, region);
-    // Prevent async event-firing.
-    this.bukkitScheduler.runTask(this.plugin, task -> this.pluginManager.callEvent(regionEnteredEvent));
+    if(FOLIA_SUPPORT) {
+      this.plugin.getServer().getRegionScheduler().execute(this.plugin, player.getLocation(), () -> this.pluginManager.callEvent(regionEnteredEvent));
+    } else {
+      this.bukkitScheduler.runTask(this.plugin, task -> this.pluginManager.callEvent(regionEnteredEvent));
+    }
     if (regionEnteredEvent.isCancelled()) {
       DebugHelper.write("RegionEnteredEvent has been cancelled, skipping in-cache saving.");
       return false;
@@ -140,7 +165,11 @@ public final class PluginRegionUpdaterManagerImpl implements RegionUpdaterManage
       DebugHelper.write("Not entered-region by player data deletion from cache.");
       return false;
     }
-    this.bukkitScheduler.runTask(this.plugin, task -> this.pluginManager.callEvent(new RegionQuitEvent(player, region)));
+    if(FOLIA_SUPPORT) {
+      this.plugin.getServer().getRegionScheduler().execute(this.plugin, player.getLocation(), () -> this.pluginManager.callEvent(new RegionQuitEvent(player, region)));
+    } else {
+      this.bukkitScheduler.runTask(this.plugin, task -> this.pluginManager.callEvent(new RegionQuitEvent(player, region)));
+    }
     DebugHelper.write("Entered-region by player data deletion completed.");
     return true;
   }
